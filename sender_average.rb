@@ -1,21 +1,11 @@
 require 'mongoid'
 require "google_drive"
+require 'average'
 Mongoid.load!('mongoid.yml', :production)
 Mongoid.raise_not_found_error = false
 
-class Average
-    include Mongoid::Document
-    field :ha
-    field :ht
-    field :tm
-    field :lm
-    field :ps
-    field :unix
-    field :nlecturas
-    store_in collection: 'average'
-end
 
-class Sender
+class SenderAverage
     
     def initialize
         @today = Date.today.to_time.to_i
@@ -62,6 +52,6 @@ class Sender
     end
 end
 
-s = Sender.new
+s = SenderAverage.new
 s.getDaily
 s.sendmlab

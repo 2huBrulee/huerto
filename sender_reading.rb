@@ -1,20 +1,9 @@
 require 'mongoid'
 require "google_drive"
+require 'reading'
 Mongoid.load!('mongoid.yml', :production)
 
-class Lectura
-    include Mongoid::Document
-    field :ha
-    field :ht
-    field :tm
-    field :lm
-    field :ps
-    field :unix
-    field :purl
-    store_in collection: 'huerto'
-end
-
-class Sender
+class SenderReading
     
     def initialize()
         @unix_time = Time.now.to_i
@@ -56,5 +45,5 @@ class Sender
 
 end
 
-s = Sender.new
+s = SenderReading.new
 s.sendmlab
