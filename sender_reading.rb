@@ -5,8 +5,14 @@ Mongoid.load!('mongoid.yml', :production)
 
 class SenderReading
     
-    def initialize()
-        @unix_time = Time.now.to_i
+    def initialize(ha:1,ht:2,tm:3,lm:4,ps:5,unix_time:0,file_name:'')
+        @ha=ha
+        @ht=ht
+        @tm=tm
+        @lm=lm
+        @ps=ps
+        @unix_time = unix_time
+        @file_name = file_name
     end
     
     def sendDrive
@@ -45,5 +51,3 @@ class SenderReading
 
 end
 
-s = SenderReading.new
-s.sendmlab

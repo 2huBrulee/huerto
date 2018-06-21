@@ -1,4 +1,6 @@
 require 'rubyserial'
+require 'sender_reading'
+require 'sender_average'
 
 class Listener
     def initialize
@@ -11,7 +13,6 @@ class Listener
             puts 'No ha mandado nada el arduino'
         else
             #parse data
-            #sendMlab
         end
     end
 
@@ -27,6 +28,14 @@ class Listener
             unix_time = Time.now.to_i
             self.readCamera(unix_time)
             self.readSerial
+
+            s = SenderReading.new(:unix_time => unix_time)
+            s.sendmlab
+
+            sa = SenderAverage.new
+            sa.getDaily
+            sa.sendmlab
+
             sleep(5.minutes)
         end
     end

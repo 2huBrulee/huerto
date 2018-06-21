@@ -7,7 +7,13 @@ Mongoid.raise_not_found_error = false
 
 class SenderAverage
     
-    def initialize
+    def initialize(ha:1,ht:2,tm:3,lm:4,ps:5,unix_time:0,file_name:'')
+        @ha=ha
+        @ht=ht
+        @tm=tm
+        @lm=lm
+        @ps=ps
+        @unix_time = unix_time
         @today = Date.today.to_time.to_i
     end
     
@@ -52,6 +58,3 @@ class SenderAverage
     end
 end
 
-s = SenderAverage.new
-s.getDaily
-s.sendmlab
