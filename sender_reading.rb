@@ -1,6 +1,6 @@
 require 'mongoid'
 require "google_drive"
-require 'reading'
+require './reading'
 Mongoid.load!('mongoid.yml', :production)
 
 class SenderReading

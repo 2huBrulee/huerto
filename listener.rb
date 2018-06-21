@@ -1,6 +1,6 @@
 require 'rubyserial'
-require 'sender_reading'
-require 'sender_average'
+require './sender_reading'
+require './sender_average'
 
 class Listener
     def initialize

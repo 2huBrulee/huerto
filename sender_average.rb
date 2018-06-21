@@ -1,6 +1,6 @@
 require 'mongoid'
 require "google_drive"
-require 'average'
+require './average'
 Mongoid.load!('mongoid.yml', :production)
 Mongoid.raise_not_found_error = false
 
