@@ -15,11 +15,10 @@ class SenderReading
         @file_name = file_name
     end
     
-    def sendDrive
-        file_name = "img_#{@unix_time}.jpg";
+    def sendDrive(file_name:'')
+        file_name = file_name;
         
         pwd = Dir.pwd
-        system( "fswebcam #{pwd}/photos/#{file_name}" )
 
         session = GoogleDrive::Session.from_config("sistemaespinaca-7d522b23ba38.json")
 
@@ -31,15 +30,15 @@ class SenderReading
         linko
     end
 
-    def sendmlab
+    def sendmlab (link:'')
         dato = Lectura.new(
-        ha: '1',
-        ht: '2',
-        tm: '3',
-        lm: '4',
-        ps: '5',
+        ha: @ha,
+        ht: @ht,
+        tm: @tm,
+        lm: @lm,
+        ps: @ps,
         unix: @unix_time,
-        purl: self.sendDrive
+        purl: link
         )
 
         dato.save!

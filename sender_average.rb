@@ -7,7 +7,7 @@ Mongoid.raise_not_found_error = false
 
 class SenderAverage
     
-    def initialize(ha:1,ht:2,tm:3,lm:4,ps:5,unix_time:0,file_name:'')
+    def initialize(ha:1,ht:2,tm:3,lm:4,ps:5,unix_time:0)
         @ha=ha
         @ht=ht
         @tm=tm
@@ -26,11 +26,11 @@ class SenderAverage
     def sendmlab
         if @data.nil?
             dato = Average.new(
-            ha: 1.0,
-            ht: 2.0,
-            tm: 3.0,
-            lm: 4.0,
-            ps: 5.0,
+            ha: @ha,
+            ht: @ht,
+            tm: @tm,
+            lm: @lm,
+            ps: @ps,
             unix: @today,
             nlecturas: 1
             )
@@ -39,11 +39,11 @@ class SenderAverage
 
         else
             nnlecturas = @data.nlecturas + 1
-            nha = (@data.ha * @data.nlecturas + 3.0 ) *1.0 / nnlecturas
-            nht = (@data.ht * @data.nlecturas + 4.0 ) *1.0 / nnlecturas
-            ntm = (@data.tm * @data.nlecturas + 5.0 ) *1.0 / nnlecturas
-            nlm = (@data.lm * @data.nlecturas + 6.0 ) *1.0 / nnlecturas
-            nps = (@data.ps * @data.nlecturas + 7.0 ) *1.0 / nnlecturas
+            nha = (@data.ha * @data.nlecturas + @ha ) *1.0 / nnlecturas
+            nht = (@data.ht * @data.nlecturas + @ht ) *1.0 / nnlecturas
+            ntm = (@data.tm * @data.nlecturas + @tm ) *1.0 / nnlecturas
+            nlm = (@data.lm * @data.nlecturas + @lm ) *1.0 / nnlecturas
+            nps = (@data.ps * @data.nlecturas + @ps ) *1.0 / nnlecturas
             
             Average.where(unix: @today).update({
                 ha: nha,

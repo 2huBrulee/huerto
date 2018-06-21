@@ -20,19 +20,20 @@ class Listener
         file_name = "img_#{unix_time}.jpg";
         pwd = Dir.pwd
         system( "fswebcam #{pwd}/photos/#{file_name}" )
-        
+        file_name
     end
 
     def loop
         while true
             unix_time = Time.now.to_i
-            self.readCamera(unix_time)
+            fn = self.readCamera(unix_time)
             self.readSerial
 
-            s = SenderReading.new(:unix_time => unix_time)
-            s.sendmlab
+            s = SenderReading.new(:unix_time => unix_time, :file_name => fn)
+            link = s.sendDrive()
+            s.sendmlab(:link => link)
 
-            sa = SenderAverage.new
+            sa = SenderAverage.new(:unix_time => unix_time)
             sa.getDaily
             sa.sendmlab
 
