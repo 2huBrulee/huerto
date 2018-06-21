@@ -12,6 +12,7 @@ class Listener
         if @lectura.nil?
             puts 'No ha mandado nada el arduino'
         else
+            puts @lectura
             #parse data
         end
     end
@@ -23,8 +24,8 @@ class Listener
         file_name
     end
 
-    def loop
-        while true
+    def looper
+        loop do
             unix_time = Time.now.to_i
             fn = self.readCamera(unix_time)
             self.readSerial
@@ -42,3 +43,5 @@ class Listener
     end
 end
 
+l = Listener.new
+l.looper
