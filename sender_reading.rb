@@ -1,6 +1,7 @@
 require 'mongoid'
 require "google_drive"
 require './reading'
+
 Mongoid.load!('mongoid.yml', :production)
 
 class SenderReading
@@ -17,7 +18,7 @@ class SenderReading
     
     def sendDrive(file_name:'')
         file_name = file_name;
-        
+        puts "filename: #{file_name}"
         pwd = Dir.pwd
 
         session = GoogleDrive::Session.from_config("sistemaespinaca-7d522b23ba38.json")
@@ -31,6 +32,7 @@ class SenderReading
     end
 
     def sendmlab (link:'')
+        Lectura.delete_all
         dato = Lectura.new(
         ha: @ha,
         ht: @ht,

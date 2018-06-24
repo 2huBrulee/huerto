@@ -2,7 +2,7 @@ require 'mongoid'
 require "google_drive"
 require './average'
 Mongoid.load!('mongoid.yml', :production)
-Mongoid.raise_not_found_error = false
+Mongoid.raise_not_found_error = true
 
 
 class SenderAverage
@@ -18,12 +18,18 @@ class SenderAverage
     end
     
     def getDaily
-        @data = Average.find_by(unix: @today)
-        puts @data.ha
-        puts @data.nlecturas
+        puts "Average.count #{Average.count}"
+        if Average.count > 0
+            @data = Average.find_by(unix: @today)
+            puts @data.ha
+            puts @data.nlecturas
+        else
+            puts Average.count
+        end
     end
 
     def sendmlab
+        
         if @data.nil?
             dato = Average.new(
             ha: @ha,

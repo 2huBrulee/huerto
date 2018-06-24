@@ -1,11 +1,20 @@
 require 'rubyserial'
 require 'serialport'
+
+require 'json'
+
 require './sender_reading'
 require './sender_average'
+require 'pi_piper'
+include PiPiper
+
 
 class Listener
     def initialize
         #@arduino = Serial.new '/dev/ttyACM0'
+
+        @pin1 = PiPiper::Pin.new(:pin => 17, :direction => :out)
+        @pin2 = PiPiper::Pin.new(:pin => 18, :direction => :out)
 
         @port_str = "/dev/ttyACM0"
         @baud_rate = 9600
@@ -18,20 +27,12 @@ class Listener
     end
 
     def readSerial
-        #@lectura = @arduino.read(256)
-        #if @lectura.nil?
-        #    puts 'No ha mandado nada el arduino'
-        #else
-        #    puts @lectura
-            #parse data
-        #end
-
         @sp.flush()
         if (i = @sp.gets.chomp)
             puts i
             lectura = i
         end
-
+        @sp.flush()
         lectura
     end
 
@@ -42,22 +43,61 @@ class Listener
         file_name
     end
 
+    def valid_json?(json)
+        JSON.parse(json)
+        return true
+      rescue JSON::ParserError => e
+        return false
+    end
+
     def looper
         loop do
             unix_time = Time.now.to_i
-            fn = self.readCamera(unix_time)
+            fin = self.readCamera(unix_time)
             l = self.readSerial
-            puts "l:#{l}"
+            puts "lectura de arduino :#{l}"
+            pwd = Dir.pwd
+            
+            if self.valid_json?(l)
+                p ardata = JSON.parse(l, {:symbolize_names=>true})
+            
+                puts ardata
 
-            s = SenderReading.new(:unix_time => unix_time, :file_name => fn)
-            link = s.sendDrive()
-            s.sendmlab(:link => link)
+                if ardata[:ht] > 170
+                    # mas de 170 de sequedad
+                    pin1.on
+                    pin2.off
+                else
+                    pin1.off
+                    pin1.off
+                end
 
-            sa = SenderAverage.new(:unix_time => unix_time)
-            sa.getDaily
-            sa.sendmlab
-
-            sleep(5.minutes)
+                s = SenderReading.new(
+                    :ha => ardata[:ha], 
+                    :ht => ardata[:ht], 
+                    :tm => ardata[:tm], 
+                    :lm => ardata[:lm], 
+                    :ps => ardata[:ps],
+                    :unix_time => unix_time
+                    )
+                link = s.sendDrive(:file_name => fin)
+                
+                s.sendmlab(
+                    :link => link)
+                
+                sa = SenderAverage.new(
+                    :ha => ardata[:ha], 
+                    :ht => ardata[:ht], 
+                    :tm => ardata[:tm], 
+                    :lm => ardata[:lm], 
+                    :ps => ardata[:ps],
+                    :unix_time => unix_time
+                    )
+                sa.getDaily
+                sa.sendmlab
+            end
+            #sleep(5.minutes)
+            sleep(12.seconds)
         end
     end
 end
